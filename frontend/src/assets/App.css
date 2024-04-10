@@ -1,0 +1,15 @@
+body, html, #root {
+  height: 100%;
+}
+
+.navbar-brand > a {
+  text-decoration: none;
+}
+
+.navbar-brand > a:visited {
+  color: inherit;
+}
+
+.navbar-brand > a:hover {
+  color: inherit;
+}
