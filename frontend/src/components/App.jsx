@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 
 import '../assets/App.css';
+import ChatPage from './ChatPage';
 import LoginForm from './LoginForm';
 import Page404 from './Page404';
 import Navbar from './Navbar';
@@ -25,7 +26,7 @@ const App = () => {
           <Route path="*" element={<Page404 />} />
           <Route path={routes.loginPagePath()} element={<LoginForm />} />
           <Route path="/" element={isAuthorisedUser ? <Outlet /> : <Navigate to={routes.loginPagePath()} />}>
-            <Route path="" element={<Page404 />} />
+            <Route path="" element={<ChatPage />} />
           </Route>
         </Routes>
       </div>
