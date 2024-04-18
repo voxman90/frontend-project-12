@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import i18next from 'i18next';
+import { io } from 'socket.io-client';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 
 import resources from './locales/index.js';
 import store from './slices/index.js';
 import App from './components/App.jsx';
+import { SocketContext } from './context/socket';
 
 import reportWebVitals from './reportWebVitals.js';
 
@@ -22,13 +24,17 @@ i18next
     },
   });
 
+const socket = io();
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <I18nextProvider i18n={i18next} defaultNS="translation">
-        <App />
-      </I18nextProvider>
+      <SocketContext.Provider value={socket}>
+        <I18nextProvider i18n={i18next} defaultNS="translation">
+          <App />
+        </I18nextProvider>
+      </SocketContext.Provider>
     </Provider>
   </React.StrictMode>,
 );

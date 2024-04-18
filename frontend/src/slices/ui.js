@@ -6,11 +6,22 @@ import { actions as channelsActions } from './channels';
 
 const defaultChannelId = '1';
 
+const msgFormStatus = {
+  ready: 'ready',
+  pending: 'pending',
+  success: 'success',
+  failure: 'failure',
+};
+
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
     activeChannelId: defaultChannelId,
     isChatContentLoaded: false,
+    msgForm: {
+      status: msgFormStatus.ready,
+      error: null,
+    },
   },
   reducers: {
     setActiveChannel(state, { payload }) {
@@ -18,6 +29,12 @@ const uiSlice = createSlice({
     },
     setChatContentLoaded(state) {
       state.isChatContentLoaded = true;
+    },
+    setMsgFormStatus(state, { payload }) {
+      state.msgForm.state = payload;
+    },
+    setMsgFormError(state, { payload }) {
+      state.msgForm.error = payload;
     },
   },
   extraReducers: (builder) => {
@@ -31,6 +48,8 @@ const uiSlice = createSlice({
     });
   },
 });
+
+export { msgFormStatus };
 
 export const { actions } = uiSlice;
 
