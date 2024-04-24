@@ -12,6 +12,8 @@ import App from './components/App.jsx';
 import { SocketContext } from './context/socket';
 
 import reportWebVitals from './reportWebVitals.js';
+import { actions as messagesActions } from './slices/messages.js';
+import { actions as channelsActions } from './slices/channels.js';
 
 i18next
   .use(initReactI18next)
@@ -25,6 +27,22 @@ i18next
   });
 
 const socket = io();
+
+socket.on('newMessage', (payload) => {
+  store.dispatch(messagesActions.addMessage(payload));
+});
+
+socket.on('newChannel', (payload) => {
+  store.dispatch(channelsActions.addChannel(payload));
+});
+
+socket.on('renameChannel', ({ name, id }) => {
+  store.dispatch(channelsActions.renameChannel({ id, name }));
+});
+
+socket.on('removeChannel', ({ id }) => {
+  store.dispatch(channelsActions.removeChannel(id));
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

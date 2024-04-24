@@ -1,12 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Card } from 'react-bootstrap';
-// import cn from 'classnames';
 
 import MessageForm from './MessageForm';
-import { actions as messagesActions } from '../slices/messages';
-import { SocketContext } from '../context/socket';
+import { messagesSelectors } from '../slices/messages';
+import { channelsSelectors } from '../slices/channels';
 
 const Message = ({ messageData }) => {
   const { username, body } = messageData;
@@ -26,23 +25,18 @@ const ChannelHeader = ({ channelName, messageCount, t }) => (
 
 const MessagesPanel = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const socket = useContext(SocketContext);
   const activeChannelId = useSelector((state) => state.ui.activeChannelId);
-  const channelName = useSelector((state) => state.channels.entities[activeChannelId].name);
-  const messagesObj = useSelector((state) => state.messages.entities);
-  const activeChannelMessages = Object.values(messagesObj)
-    .filter(({ channelId }) => channelId === activeChannelId);
+  const activeChannelName = useSelector((state) => (
+    channelsSelectors.selectById(state, activeChannelId)?.name
+  ));
+  const messages = useSelector(messagesSelectors.selectAll);
+  const activeChannelMessages = messages.filter(({ channelId }) => channelId === activeChannelId);
   const messageCount = activeChannelMessages.length;
-
-  socket.on('newMessage', (payload) => {
-    dispatch(messagesActions.addMessage(payload));
-  });
 
   return (
     <Card className="rounded-0 border-0 h-100">
       <ChannelHeader
-        channelName={channelName}
+        channelName={activeChannelName}
         messageCount={messageCount}
         t={t}
       />

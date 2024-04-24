@@ -13,6 +13,12 @@ const msgFormStatus = {
   failure: 'failure',
 };
 
+const modalType = {
+  addChannel: 'addChannel',
+  deleteChannel: 'deleteChannel',
+  renameChannel: 'renameChannel',
+};
+
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
@@ -21,6 +27,11 @@ const uiSlice = createSlice({
     msgForm: {
       status: msgFormStatus.ready,
       error: null,
+    },
+    modal: {
+      type: null,
+      channelId: null,
+      isShown: false,
     },
   },
   reducers: {
@@ -36,20 +47,30 @@ const uiSlice = createSlice({
     setMsgFormError(state, { payload }) {
       state.msgForm.error = payload;
     },
+    closeModal(state) {
+      state.modal.isShown = false;
+      state.modal.type = null;
+      state.modal.channelId = null;
+    },
+    openModal(state, { payload }) {
+      const { channelId, type } = payload;
+      state.modal.isShown = true;
+      state.modal.type = type;
+      state.modal.channelId = channelId;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(channelsActions.removeChannel, (state, action) => {
-      const activeChannelId = state.id;
-      const removedChannelId = action.payload;
+    builder.addCase(channelsActions.removeChannel, (state, { payload: removedChannelId }) => {
+      const { activeChannelId } = state;
 
       if (activeChannelId === removedChannelId) {
-        state.activeChannel = defaultChannelId;
+        state.activeChannelId = defaultChannelId;
       }
     });
   },
 });
 
-export { msgFormStatus };
+export { msgFormStatus, modalType };
 
 export const { actions } = uiSlice;
 

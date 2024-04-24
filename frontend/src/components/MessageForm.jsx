@@ -73,6 +73,9 @@ const MessageForm = () => {
           disabled={formik.isSubmitting}
           placeholder={t('chat.newMessage')}
         />
+        <Form.Label className="d-none">
+          {t('chat.newMessage')}
+        </Form.Label>
         <Button
           type="submit"
           variant="outline-primary"

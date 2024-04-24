@@ -10,6 +10,7 @@ import { actions as uiActions } from '../slices/ui';
 import routes from '../routes';
 import ChannelsPanel from './ChannelsPanel';
 import MessagesPanel from './MessagesPanel';
+import Modal from './Modal';
 
 const fetchData = async (path, authToken) => axios.get(
   path,
@@ -47,6 +48,7 @@ const ChatPage = () => {
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
+        <Modal />
         {
           !isChatContentLoaded
             ? (
