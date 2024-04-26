@@ -30,8 +30,10 @@ i18next
   });
 
 const rollbarConfig = {
-  accessToken: 'eeb3165adf0b4408aebed284cced4260',
-  environment: 'testenv',
+  accessToken: process.env.ACCESS_TOKEN,
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  environment: 'production',
 };
 
 const socket = io();
