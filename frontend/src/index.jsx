@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import i18next from 'i18next';
 import { io } from 'socket.io-client';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
+import * as LeoProfanity from 'leo-profanity';
 
 import resources from './locales/index.js';
 import store from './slices/index.js';
@@ -14,6 +15,7 @@ import { SocketContext } from './context/socket';
 import reportWebVitals from './reportWebVitals.js';
 import { actions as messagesActions } from './slices/messages.js';
 import { actions as channelsActions } from './slices/channels.js';
+import { LeoProfanityContext } from './context/filter.js';
 
 i18next
   .use(initReactI18next)
@@ -27,6 +29,8 @@ i18next
   });
 
 const socket = io();
+
+const filter = LeoProfanity;
 
 socket.on('newMessage', (payload) => {
   store.dispatch(messagesActions.addMessage(payload));
@@ -51,11 +55,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <SocketContext.Provider value={socket}>
-        <I18nextProvider i18n={i18next} defaultNS="translation">
-          <App />
-        </I18nextProvider>
-      </SocketContext.Provider>
+      <LeoProfanityContext.Provider value={filter}>
+        <SocketContext.Provider value={socket}>
+          <I18nextProvider i18n={i18next} defaultNS="translation">
+            <App />
+          </I18nextProvider>
+        </SocketContext.Provider>
+      </LeoProfanityContext.Provider>
     </Provider>
   </React.StrictMode>,
 );

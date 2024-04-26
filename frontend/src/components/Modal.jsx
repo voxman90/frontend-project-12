@@ -1,4 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+} from 'react';
 import { useFormik } from 'formik';
 import {
   Button,
@@ -12,6 +17,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import * as yup from 'yup';
 
+import { LeoProfanityContext } from '../context/filter';
 import { actions as uiActions, modalType } from '../slices/ui';
 import { channelsSelectors } from '../slices/channels';
 import routes from '../routes';
@@ -20,9 +26,10 @@ const AddChannelModal = ({ t, token }) => {
   const dispatch = useDispatch();
   const [isSubmitting, setSubmitting] = useState(false);
   const inputRef = useRef(null);
+  const filter = useContext(LeoProfanityContext);
 
   const channels = useSelector(channelsSelectors.selectAll);
-  const channelsNames = channels.map(({ name }) => name);
+  const channelsNames = channels.map(({ name }) => filter.clean(name));
 
   const schema = yup.object().shape({
     channelName: yup.string()
@@ -43,7 +50,7 @@ const AddChannelModal = ({ t, token }) => {
       setSubmitting(true);
       axios.post(
         routes.channelsPath(),
-        { name: channelName },
+        { name: filter.clean(channelName) },
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then((response) => {
@@ -177,9 +184,10 @@ const RenameChannelModal = ({ t, token, channelId }) => {
   const dispatch = useDispatch();
   const [isSubmitting, setSubmitting] = useState(false);
   const inputRef = useRef(null);
+  const filter = useContext(LeoProfanityContext);
 
   const channels = useSelector(channelsSelectors.selectAll);
-  const channelsNames = channels.map(({ name }) => name);
+  const channelsNames = channels.map(({ name }) => filter.clean(name));
 
   const schema = yup.object().shape({
     newChannelName: yup.string()
@@ -200,7 +208,7 @@ const RenameChannelModal = ({ t, token, channelId }) => {
       setSubmitting(true);
       axios.patch(
         routes.channelPath(channelId),
-        { name: newChannelName },
+        { name: filter.clean(newChannelName) },
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then(() => {
