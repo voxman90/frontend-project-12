@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import {
+  Alert,
   Button,
   Form,
   FloatingLabel,
@@ -12,12 +14,15 @@ import axios from 'axios';
 import * as yup from 'yup';
 
 import routes from '../routes';
+import { actions as authActions } from '../slices/auth';
 
 const SignUpForm = () => {
   const { t } = useTranslation();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [isSubmitting, setSubmitting] = useState(false);
+  const [signUpError, setSignUpError] = useState(null);
   const usernameInputRef = useRef();
+  const navigate = useNavigate();
 
   const schema = yup.object().shape({
     username: yup.string()
@@ -39,13 +44,30 @@ const SignUpForm = () => {
       passwordConfirmation: '',
     },
     validationSchema: schema,
-    onChange: () => {
+    onSubmit: ({ username, password }) => {
       setSubmitting(true);
 
       axios.post(
         routes.signupPath(),
-        {},
+        { username, password },
       )
+        .then((response) => {
+          setSignUpError(null);
+          dispatch(authActions.login(response.data));
+          navigate(routes.chatPagePath());
+        })
+        .catch((reason) => {
+          const status = reason.response?.status;
+
+          switch (status) {
+            case (409): {
+              setSignUpError(t('signup.alreadyExists'));
+              break;
+            }
+            default:
+              console.error(reason);
+          }
+        })
         .finally(() => {
           setSubmitting(false);
         });
@@ -58,8 +80,8 @@ const SignUpForm = () => {
 
   return (
     <div className="d-flex justify-content-center m-0 p-0 h-100">
-      <Card className="align-self-center flex-grow-0 p-5">
-        <Card.Header className="bg-white border-0">
+      <Card className="align-self-center flex-grow-0 px-5 pb-5 pt-4">
+        <Card.Header className="bg-white border-0 mb-3">
           <Card.Title className="text-center fs-1">{t('signup.header')}</Card.Title>
         </Card.Header>
         <Card.Body className="p-0">
@@ -119,6 +141,11 @@ const SignUpForm = () => {
                 </Form.Control.Feedback>
               </FloatingLabel>
             </Form.Group>
+            {signUpError && (
+              <Alert variant="danger">
+                {signUpError}
+              </Alert>
+            )}
             <Button
               type="submit"
               className="w-100"

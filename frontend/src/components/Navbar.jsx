@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { logout } from '../slices/auth.js';
+import { actions as authActions } from '../slices/auth.js';
 import routes from '../routes.js';
 
 const Navbar = () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
         {
           isAuthorisedUser
           && (
-            <Button onClick={() => dispatch(logout())}>
+            <Button onClick={() => dispatch(authActions.logout())}>
               {t('logout')}
             </Button>
           )

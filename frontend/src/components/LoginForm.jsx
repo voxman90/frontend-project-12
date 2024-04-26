@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 
-import { login } from '../slices/auth.js';
+import { actions as authActions } from '../slices/auth.js';
 import routes from '../routes.js';
 
 const LoginForm = () => {
@@ -31,7 +31,7 @@ const LoginForm = () => {
 
       try {
         const res = await axios.post(routes.loginPath(), values);
-        dispatch(login(res.data));
+        dispatch(authActions.login(res.data));
         const { from } = location.state || { from: { pathname: routes.chatPagePath() } };
         navigate(from);
       } catch (err) {
