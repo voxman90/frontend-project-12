@@ -24,10 +24,6 @@ const uiSlice = createSlice({
   initialState: {
     activeChannelId: defaultChannelId,
     isChatContentLoaded: false,
-    msgForm: {
-      status: msgFormStatus.ready,
-      error: null,
-    },
     modal: {
       type: null,
       channelId: null,
@@ -40,12 +36,6 @@ const uiSlice = createSlice({
     },
     setChatContentLoaded(state) {
       state.isChatContentLoaded = true;
-    },
-    setMsgFormStatus(state, { payload }) {
-      state.msgForm.state = payload;
-    },
-    setMsgFormError(state, { payload }) {
-      state.msgForm.error = payload;
     },
     closeModal(state) {
       state.modal.isShown = false;

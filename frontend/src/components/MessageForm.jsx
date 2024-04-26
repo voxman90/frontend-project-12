@@ -1,28 +1,18 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import axios from 'axios';
-// import cn from 'classnames';
+
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
-import { actions as uiActions, msgFormStatus } from '../slices/ui';
 import routes from '../routes';
-
-const sendMsg = async (authToken, channelId, msgData) => {
-  const headers = { Authorization: `Bearer ${authToken}` };
-
-  return axios.post(
-    routes.messagesPath(channelId),
-    msgData,
-    { headers },
-  );
-};
 
 const MessageForm = () => {
   const { t } = useTranslation();
+  const [isSubmitting, setSubmitting] = useState(false);
   const inputRef = useRef();
-  const dispatch = useDispatch();
+
   const { username, token } = useSelector((state) => state.auth);
   const channelId = useSelector((state) => state.ui.activeChannelId);
 
@@ -30,26 +20,28 @@ const MessageForm = () => {
     initialValues: {
       message: '',
     },
-    onSubmit: async (formData) => {
-      dispatch(uiActions.setMsgFormStatus(msgFormStatus.pending));
+    onSubmit: async (values) => {
+      setSubmitting(true);
 
       const message = {
-        body: formData.message,
+        body: values.message,
         channelId,
         username,
       };
 
-      sendMsg(token, channelId, message)
+      axios.post(
+        routes.messagesPath(channelId),
+        message,
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
         .then(() => {
           formik.resetForm();
-          dispatch(uiActions.setMsgFormStatus(msgFormStatus.success));
         })
         .catch((reason) => {
           console.error(reason);
-          dispatch(uiActions.setMsgFormStatus(msgFormStatus.failure));
         })
         .finally(() => {
-          dispatch(uiActions.setMsgFormStatus(msgFormStatus.ready));
+          setSubmitting(false);
         });
     },
   });
@@ -65,20 +57,21 @@ const MessageForm = () => {
     >
       <InputGroup className="mb-3">
         <Form.Control
-          onChange={formik.handleChange}
-          value={formik.values.message}
-          name="message"
           id="message"
-          ref={inputRef}
-          disabled={formik.isSubmitting}
+          name="message"
+          value={formik.values.message}
           placeholder={t('chat.newMessage')}
+          onChange={formik.handleChange}
+          ref={inputRef}
+          required
         />
-        <Form.Label className="d-none">
+        <Form.Label htmlFor="message" className="d-none">
           {t('chat.newMessage')}
         </Form.Label>
         <Button
           type="submit"
           variant="outline-primary"
+          disabled={isSubmitting}
         >
           {t('chat.send')}
         </Button>

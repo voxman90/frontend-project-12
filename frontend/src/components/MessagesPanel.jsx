@@ -7,13 +7,9 @@ import MessageForm from './MessageForm';
 import { messagesSelectors } from '../slices/messages';
 import { channelsSelectors } from '../slices/channels';
 
-const Message = ({ messageData }) => {
-  const { username, body } = messageData;
-
-  return (
-    <div><b>{username}</b>{`: ${body}`}</div>
-  );
-};
+const Message = ({ messageData: { username, body } }) => (
+  <div><b>{username}</b>{`: ${body}`}</div>
+);
 
 const ChannelHeader = ({ channelName, messageCount, t }) => (
   <Card.Header className="rounded-0">

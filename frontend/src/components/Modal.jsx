@@ -50,14 +50,18 @@ const AddChannelModal = ({ t, token }) => {
           dispatch(uiActions.setActiveChannel(newChannelId));
           dispatch(uiActions.closeModal());
         })
-        .catch((reason) => console.error(reason))
-        .finally(() => setSubmitting(false));
+        .catch((reason) => {
+          console.error(reason);
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
   });
 
   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+  }, [formik.isSubmitting]);
 
   return (
     <>
@@ -114,9 +118,15 @@ const DeleteChannelModal = ({ t, token, channelId }) => {
         routes.channelPath(channelId),
         { headers: { Authorization: `Bearer ${token}` } },
       )
-        .then(() => dispatch(uiActions.closeModal()))
-        .catch((reason) => console.error(reason))
-        .finally(() => setSubmitting(false));
+        .then(() => {
+          dispatch(uiActions.closeModal());
+        })
+        .catch((reason) => {
+          console.error(reason);
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
   });
 
@@ -178,15 +188,21 @@ const RenameChannelModal = ({ t, token, channelId }) => {
         { name: newChannelName },
         { headers: { Authorization: `Bearer ${token}` } },
       )
-        .then(() => dispatch(uiActions.closeModal()))
-        .catch((reason) => console.error(reason))
-        .finally(() => setSubmitting(false));
+        .then(() => {
+          dispatch(uiActions.closeModal());
+        })
+        .catch((reason) => {
+          console.error(reason);
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
   });
 
   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+  }, [formik.isSubmitting]);
 
   return (
     <>
@@ -238,10 +254,11 @@ const modals = {
 };
 
 const Modal = () => {
-  const { isShown, type, channelId } = useSelector((state) => state.ui.modal);
-  const token = useSelector((state) => state.auth.token);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const { isShown, type, channelId } = useSelector((state) => state.ui.modal);
+  const token = useSelector((state) => state.auth.token);
 
   const ModalContent = modals[type];
 
