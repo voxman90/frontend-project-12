@@ -12,6 +12,7 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 import routes from '../routes';
 import { actions as authActions } from '../slices/auth';
@@ -59,14 +60,17 @@ const SignUpForm = () => {
         .catch((reason) => {
           const status = reason.response?.status;
 
-          switch (status) {
-            case (409): {
-              setSignUpError(t('signup.alreadyExists'));
-              break;
-            }
-            default:
-              console.error(reason);
+          if (status === 409) {
+            setSignUpError(t('signup.alreadyExists'));
+            return;
           }
+
+          if (status) {
+            toast.error(t('errors.network'));
+            return;
+          }
+
+          toast.error(t('errors.unknown'));
         })
         .finally(() => {
           setSubmitting(false);

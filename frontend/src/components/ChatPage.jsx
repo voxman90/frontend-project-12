@@ -15,7 +15,8 @@ import Modal from './Modal';
 const fetchData = async (path, authToken) => axios.get(
   path,
   { headers: { Authorization: `Bearer ${authToken}` } },
-).then((response) => response.data);
+)
+  .then((response) => response.data);
 
 const ChatPage = () => {
   const dispatch = useDispatch();
@@ -51,11 +52,13 @@ const ChatPage = () => {
       {
         !isChatContentLoaded
           ? (
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">
-                {t('loading')}
-              </span>
-            </Spinner>
+            <div className="d-flex justify-content-center h-100">
+              <Spinner animation="border" role="status" className="align-self-center">
+                <span className="visually-hidden">
+                  {t('loading')}
+                </span>
+              </Spinner>
+            </div>
           )
           : (
             <div className="row p-0 m-0 h-100">

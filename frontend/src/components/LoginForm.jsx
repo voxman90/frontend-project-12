@@ -5,6 +5,7 @@ import { Button, Card, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { actions as authActions } from '../slices/auth.js';
 import routes from '../routes.js';
@@ -45,7 +46,12 @@ const LoginForm = () => {
             return;
           }
 
-          console.error(reason);
+          if (status) {
+            toast.error(t('errors.network'));
+            return;
+          }
+
+          toast.error(t('errors.unknown'));
         });
     },
   });

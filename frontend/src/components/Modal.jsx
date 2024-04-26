@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import * as yup from 'yup';
 
@@ -47,11 +48,18 @@ const AddChannelModal = ({ t, token }) => {
       )
         .then((response) => {
           const newChannelId = response.data.id;
+          toast.success(t('modals.created'));
           dispatch(uiActions.setActiveChannel(newChannelId));
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
           console.error(reason);
+
+          if (reason.response?.status) {
+            toast.error(t('errors.network'));
+          }
+
+          toast.error(t('errors.unknown'));
         })
         .finally(() => {
           setSubmitting(false);
@@ -119,10 +127,17 @@ const DeleteChannelModal = ({ t, token, channelId }) => {
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then(() => {
+          toast.success(t('modals.removed'));
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
           console.error(reason);
+
+          if (reason.response?.status) {
+            toast.error(t('errors.network'));
+          }
+
+          toast.error(t('errors.unknown'));
         })
         .finally(() => {
           setSubmitting(false);
@@ -189,10 +204,17 @@ const RenameChannelModal = ({ t, token, channelId }) => {
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then(() => {
+          toast.success(t('modals.renamed'));
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
           console.error(reason);
+
+          if (reason.response?.status) {
+            toast.error(t('errors.network'));
+          }
+
+          toast.error(t('errors.unknown'));
         })
         .finally(() => {
           setSubmitting(false);
