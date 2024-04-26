@@ -13,6 +13,7 @@ import ChatPage from './ChatPage';
 import LoginForm from './LoginForm';
 import Page404 from './Page404';
 import Navbar from './Navbar';
+import SignUpForm from './SignUpForm';
 import routes from '../routes';
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route path="*" element={<Page404 />} />
           <Route path={routes.loginPagePath()} element={<LoginForm />} />
+          <Route path={routes.signupPagePath()} element={<SignUpForm />} />
           <Route path="/" element={isAuthorisedUser ? <Outlet /> : <Navigate to={routes.loginPagePath()} />}>
             <Route path="" element={<ChatPage />} />
           </Route>
