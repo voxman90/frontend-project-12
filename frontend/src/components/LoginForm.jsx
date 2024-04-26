@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { useFormik } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { actions as authActions } from '../slices/auth.js';
 import routes from '../routes.js';
@@ -13,7 +13,6 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [authFailed, setAuthFailed] = useState(false);
   const inputRef = useRef();
-  const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -26,95 +25,86 @@ const LoginForm = () => {
       username: '',
       password: '',
     },
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       setAuthFailed(false);
 
-      try {
-        const res = await axios.post(routes.loginPath(), values);
-        dispatch(authActions.login(res.data));
-        const { from } = location.state || { from: { pathname: routes.chatPagePath() } };
-        navigate(from);
-      } catch (err) {
-        if (!err.isAxiosError) {
-          // placeholder
-          return;
-        }
+      axios.post(
+        routes.loginPath(),
+        values,
+      )
+        .then((response) => {
+          dispatch(authActions.login(response.data));
+          navigate(routes.chatPagePath());
+        })
+        .catch((reason) => {
+          const status = reason.response?.status;
 
-        if (err.response?.status === 401) {
-          setAuthFailed(true);
-          inputRef.current.select();
-        } else {
-          // placeholder
-        }
-      }
+          if (status === 401) {
+            setAuthFailed(true);
+            inputRef.current.select();
+            return;
+          }
+
+          console.error(reason);
+        });
     },
   });
 
   return (
-    <div className="container-fluid h-100">
-      <div className="row justify-content-center align-content-center h-100">
-        <div className="col-12 col-sm-8 col-md-6 col-xxl-4">
-          <div className="card shadow-sm">
-            <div className="card-body row p-5">
-              <Form onSubmit={formik.handleSubmit} className="mt-3">
-                <h1 className="text-center mb-4">
-                  {t('login.header')}
-                </h1>
-                <Form.Group className="form-floating mb-3">
-                  <Form.Control
-                    onChange={formik.handleChange}
-                    value={formik.values.username}
-                    name="username"
-                    id="username"
-                    isInvalid={authFailed}
-                    ref={inputRef}
-                    placeholder={t('login.username')}
-                    required
-                  />
-                  <Form.Label htmlFor="username">
-                    {t('login.username')}
-                  </Form.Label>
-                </Form.Group>
-                <Form.Group className="form-floating mb-4">
-                  <Form.Control
-                    type="password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                    name="password"
-                    id="password"
-                    isInvalid={authFailed}
-                    placeholder={t('login.password')}
-                    required
-                  />
-                  <Form.Label htmlFor="password">
-                    {t('login.password')}
-                  </Form.Label>
-                  {
-                    authFailed
-                    && (
-                      <Form.Control.Feedback type="invalid" tooltip>
-                        {t('login.authFailed')}
-                      </Form.Control.Feedback>
-                    )
-                  }
-                </Form.Group>
-                <div className="text-center">
-                  <Button type="submit" variant="outline-primary" className="w-50">
-                    {t('login.submit')}
-                  </Button>
-                </div>
-              </Form>
-            </div>
-            <div className="card-footer p-4">
+    <div className="d-flex justify-content-center m-0 p-0 h-100">
+      <div className="align-self-center col-12 col-sm-8 col-md-6 col-xxl-4">
+        <Card className="pt-4">
+          <Card.Header className="bg-white border-0 mb-3">
+            <Card.Title className="text-center fs-1">{t('login.header')}</Card.Title>
+          </Card.Header>
+          <Card.Body className="px-5 mb-4">
+            <Form onSubmit={formik.handleSubmit}>
+              <Form.Group className="form-floating mb-3">
+                <Form.Control
+                  id="username"
+                  name="username"
+                  placeholder={t('login.username')}
+                  onChange={formik.handleChange}
+                  value={formik.values.username}
+                  isInvalid={authFailed}
+                  ref={inputRef}
+                  required
+                />
+                <Form.Label>{t('login.username')}</Form.Label>
+              </Form.Group>
+              <Form.Group className="form-floating mb-4" controlId="password">
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formik.values.password}
+                  placeholder={t('login.password')}
+                  onChange={formik.handleChange}
+                  isInvalid={authFailed}
+                  required
+                />
+                <Form.Label>{t('login.password')}</Form.Label>
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {t('login.authFailed')}
+                </Form.Control.Feedback>
+              </Form.Group>
               <div className="text-center">
-                <span>{`${t('login.newToChat')} `}</span>
-                <Link to={routes.signupPagePath()}>
-                  {t('login.signup')}
-                </Link>
+                <Button type="submit" variant="outline-primary" className="w-50">
+                  {t('login.submit')}
+                </Button>
               </div>
+            </Form>
+          </Card.Body>
+          <Card.Footer className="p-4">
+            <div className="text-center">
+              <span>
+                {`${t('login.newToChat')} `}
+              </span>
+              <Link to={routes.signupPagePath()}>
+                {t('login.signup')}
+              </Link>
             </div>
-          </div>
-        </div>
+          </Card.Footer>
+        </Card>
       </div>
     </div>
   );
