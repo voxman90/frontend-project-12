@@ -35,14 +35,17 @@ const MessagesPanel = () => {
         messageCount={messageCount}
         t={t}
       />
-      <Card.Body className="overflow-auto">
+      <Card.Body className="overflow-auto px-5 pt-4 pb-0">
         {
           Object.values(activeChannelMessages).map(({ username, body, id }) => (
-            <div key={id} className="text-break"><b>{username}</b>{`: ${body}`}</div>
+            <div key={id} className="text-break mb-2">
+              <b>{username}</b>
+              {`: ${body}`}
+            </div>
           ))
         }
       </Card.Body>
-      <Card.Footer className="rounded-0">
+      <Card.Footer className="rounded-0 border-0 bg-white py-3 px-5">
         <MessageForm />
       </Card.Footer>
     </Card>

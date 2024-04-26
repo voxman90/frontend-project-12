@@ -55,7 +55,7 @@ const MessageForm = () => {
       onSubmit={formik.handleSubmit}
       className="d-flex flex-row align-items-center"
     >
-      <InputGroup className="mb-3">
+      <InputGroup>
         <Form.Control
           id="message"
           name="message"
