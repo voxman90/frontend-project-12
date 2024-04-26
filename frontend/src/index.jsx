@@ -6,6 +6,7 @@ import i18next from 'i18next';
 import { io } from 'socket.io-client';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import * as LeoProfanity from 'leo-profanity';
+import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 
 import resources from './locales/index.js';
 import store from './slices/index.js';
@@ -27,6 +28,11 @@ i18next
       escapeValue: false,
     },
   });
+
+const rollbarConfig = {
+  accessToken: 'eeb3165adf0b4408aebed284cced4260',
+  environment: 'testenv',
+};
 
 const socket = io();
 
@@ -54,15 +60,19 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <LeoProfanityContext.Provider value={filter}>
-        <SocketContext.Provider value={socket}>
-          <I18nextProvider i18n={i18next} defaultNS="translation">
-            <App />
-          </I18nextProvider>
-        </SocketContext.Provider>
-      </LeoProfanityContext.Provider>
-    </Provider>
+    <RollbarProvider config={rollbarConfig}>
+      <ErrorBoundary>
+        <Provider store={store}>
+          <LeoProfanityContext.Provider value={filter}>
+            <SocketContext.Provider value={socket}>
+              <I18nextProvider i18n={i18next} defaultNS="translation">
+                <App />
+              </I18nextProvider>
+            </SocketContext.Provider>
+          </LeoProfanityContext.Provider>
+        </Provider>
+      </ErrorBoundary>
+    </RollbarProvider>
   </React.StrictMode>,
 );
 
