@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useFormik } from 'formik';
 import {
   Button,
@@ -16,38 +16,48 @@ import { channelsSelectors } from '../slices/channels';
 import routes from '../routes';
 
 const AddChannelModal = ({ t, token }) => {
-  const inputRef = useRef(null);
   const dispatch = useDispatch();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const inputRef = useRef(null);
 
   const channels = useSelector(channelsSelectors.selectAll);
-  const channelsNames = channels.map(({ channelName }) => channelName);
+  const channelsNames = channels.map(({ name }) => name);
+
+  const schema = yup.object().shape({
+    channelName: yup.string()
+      .required(t('modals.required'))
+      .min(3, t('modals.min'))
+      .max(20, t('modals.max'))
+      .notOneOf(channelsNames, t('modals.uniq')),
+  });
 
   const formik = useFormik({
     initialValues: {
       channelName: '',
     },
-    validationSchema: yup.object({
-      channelName: yup.string()
-        .required(t('modals.required'))
-        .min(3, t('modals.min'))
-        .max(20, t('modals.max'))
-        .notOneOf(channelsNames, t('modals.uniq')),
-    }),
+    validationSchema: schema,
+    validateOnBlur: false,
+    validateOnChange: false,
     onSubmit: ({ channelName }) => {
+      setSubmitting(true);
       axios.post(
         routes.channelsPath(),
         { name: channelName },
         { headers: { Authorization: `Bearer ${token}` } },
-      ).then((response) => {
-        const newChannelId = response.data.id;
-        dispatch(uiActions.setActiveChannel(newChannelId));
-        dispatch(uiActions.closeModal());
-      }).catch((reason) => {
-        console.error(reason);
-        inputRef.focus();
-      });
+      )
+        .then((response) => {
+          const newChannelId = response.data.id;
+          dispatch(uiActions.setActiveChannel(newChannelId));
+          dispatch(uiActions.closeModal());
+        })
+        .catch((reason) => console.error(reason))
+        .finally(() => setSubmitting(false));
     },
   });
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   return (
     <>
@@ -55,20 +65,21 @@ const AddChannelModal = ({ t, token }) => {
         <ModalBootstrap.Title>{t('modals.add')}</ModalBootstrap.Title>
         <CloseButton onClick={() => dispatch(uiActions.closeModal())} />
       </ModalBootstrap.Header>
-      <Form onSubmit={formik.handleSubmit}>
+      <Form noValidate onSubmit={formik.handleSubmit}>
         <ModalBootstrap.Body>
-          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+          <Form.Group className="mb-3" controlId="channelName">
             <Form.Label className="d-none">{t('modals.channelName')}</Form.Label>
             <Form.Control
               type="text"
               name="channelName"
-              placeholder=""
-              ref={inputRef}
-              autoFocus
-              disabled={formik.isSubmitting}
               value={formik.values.channelName}
               onChange={formik.handleChange}
+              isInvalid={!!formik.errors.channelName}
+              ref={inputRef}
             />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.channelName}
+            </Form.Control.Feedback>
           </Form.Group>
         </ModalBootstrap.Body>
         <ModalBootstrap.Footer>
@@ -81,6 +92,7 @@ const AddChannelModal = ({ t, token }) => {
           <Button
             type="submit"
             variant="primary"
+            disabled={isSubmitting}
           >
             {t('modals.submit')}
           </Button>
@@ -92,16 +104,19 @@ const AddChannelModal = ({ t, token }) => {
 
 const DeleteChannelModal = ({ t, token, channelId }) => {
   const dispatch = useDispatch();
+  const [isSubmitting, setSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: {},
     onSubmit: () => {
+      setSubmitting(true);
       axios.delete(
         routes.channelPath(channelId),
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then(() => dispatch(uiActions.closeModal()))
-        .catch((reason) => console.error(reason));
+        .catch((reason) => console.error(reason))
+        .finally(() => setSubmitting(false));
     },
   });
 
@@ -123,6 +138,7 @@ const DeleteChannelModal = ({ t, token, channelId }) => {
           <Button
             type="submit"
             variant="danger"
+            disabled={isSubmitting}
           >
             {t('modals.confirm')}
           </Button>
@@ -133,36 +149,44 @@ const DeleteChannelModal = ({ t, token, channelId }) => {
 };
 
 const RenameChannelModal = ({ t, token, channelId }) => {
-  const inputRef = useRef(null);
   const dispatch = useDispatch();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const inputRef = useRef(null);
 
-  const channels = useSelector((state) => state.channels.entities);
-  const channelsNames = Object.values(channels).map(({ channelName }) => channelName);
+  const channels = useSelector(channelsSelectors.selectAll);
+  const channelsNames = channels.map(({ name }) => name);
+
+  const schema = yup.object().shape({
+    newChannelName: yup.string()
+      .required(t('modals.required'))
+      .min(3, t('modals.min'))
+      .max(20, t('modals.max'))
+      .notOneOf(channelsNames, t('modals.uniq')),
+  });
 
   const formik = useFormik({
     initialValues: {
       newChannelName: '',
     },
-    validationSchema: yup.object({
-      newChannelName: yup.string()
-        .required(t('modalss.required'))
-        .min(3, t('modalss.min'))
-        .max(20, t('modalss.max'))
-        .notOneOf(channelsNames, t('modalss.uniq')),
-    }),
+    validationSchema: schema,
+    validateOnBlur: false,
+    validateOnChange: false,
     onSubmit: ({ newChannelName }) => {
+      setSubmitting(true);
       axios.patch(
         routes.channelPath(channelId),
         { name: newChannelName },
         { headers: { Authorization: `Bearer ${token}` } },
-      ).then(() => {
-        dispatch(uiActions.closeModal());
-      }).catch((reason) => {
-        console.error(reason);
-        inputRef.focus();
-      });
+      )
+        .then(() => dispatch(uiActions.closeModal()))
+        .catch((reason) => console.error(reason))
+        .finally(() => setSubmitting(false));
     },
   });
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   return (
     <>
@@ -170,19 +194,21 @@ const RenameChannelModal = ({ t, token, channelId }) => {
         <ModalBootstrap.Title>{t('modals.rename')}</ModalBootstrap.Title>
         <CloseButton onClick={() => dispatch(uiActions.closeModal())} />
       </ModalBootstrap.Header>
-      <Form onSubmit={formik.handleSubmit}>
+      <Form noValidate onSubmit={formik.handleSubmit}>
         <ModalBootstrap.Body>
-          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+          <Form.Group className="mb-3" controlId="newChannelName">
             <Form.Label className="d-none">{t('modals.editChannelName')}</Form.Label>
             <Form.Control
               type="text"
               name="newChannelName"
-              placeholder=""
-              autoFocus
-              disabled={formik.isSubmitting}
               value={formik.values.newChannelName}
               onChange={formik.handleChange}
+              isInvalid={!!formik.errors.newChannelName}
+              ref={inputRef}
             />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.newChannelName}
+            </Form.Control.Feedback>
           </Form.Group>
         </ModalBootstrap.Body>
         <ModalBootstrap.Footer>
@@ -195,6 +221,7 @@ const RenameChannelModal = ({ t, token, channelId }) => {
           <Button
             type="submit"
             variant="primary"
+            disabled={isSubmitting}
           >
             {t('modals.submit')}
           </Button>
@@ -226,9 +253,10 @@ const Modal = () => {
     <ModalBootstrap
       show={isShown}
       centered
+      autoFocus={false}
       onHide={() => dispatch(uiActions.closeModal())}
     >
-      <ModalContent t={t} channelId={channelId} token={token} />
+      <ModalContent t={t} token={token} channelId={channelId} />
     </ModalBootstrap>
   );
 };
