@@ -14,7 +14,7 @@ const Navbar = () => {
   const { t } = useTranslation();
 
   return (
-    <NavbarComponent className="shadow">
+    <NavbarComponent className="shadow-sm bg-white">
       <div className="container">
         <NavbarComponent.Brand>
           <Link to={routes.chatPagePath()}>

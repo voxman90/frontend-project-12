@@ -7,20 +7,19 @@ import MessageForm from './MessageForm';
 import { messagesSelectors } from '../slices/messages';
 import { channelsSelectors } from '../slices/channels';
 
-const Message = ({ messageData: { username, body } }) => (
-  <div><b>{username}</b>{`: ${body}`}</div>
-);
-
 const ChannelHeader = ({ channelName, messageCount, t }) => (
-  <Card.Header className="rounded-0">
+  <Card.Header className="rounded-0 p-3">
     <b>{`# ${channelName}`}</b>
     <br />
-    <span>{`${messageCount} ${t('chat.messageCount', { count: messageCount })}`}</span>
+    <span className="text-muted">
+      {`${messageCount} ${t('chat.messageCount', { count: messageCount })}`}
+    </span>
   </Card.Header>
 );
 
 const MessagesPanel = () => {
   const { t } = useTranslation();
+
   const activeChannelId = useSelector((state) => state.ui.activeChannelId);
   const activeChannelName = useSelector((state) => (
     channelsSelectors.selectById(state, activeChannelId)?.name
@@ -36,10 +35,10 @@ const MessagesPanel = () => {
         messageCount={messageCount}
         t={t}
       />
-      <Card.Body>
+      <Card.Body className="overflow-auto">
         {
-          Object.values(activeChannelMessages).map((data) => (
-            <Message key={data.id} messageData={data} />
+          Object.values(activeChannelMessages).map(({ username, body, id }) => (
+            <div key={id} className="text-break"><b>{username}</b>{`: ${body}`}</div>
           ))
         }
       </Card.Body>

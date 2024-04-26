@@ -46,32 +46,28 @@ const ChatPage = () => {
   }, [isChatContentLoaded]);
 
   return (
-    <div className="container-fluid h-100">
-      <div className="row justify-content-center align-content-center h-100">
-        <Modal />
-        {
-          !isChatContentLoaded
-            ? (
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">{t('loading')}</span>
-              </Spinner>
-            )
-            : (
-              <div className="card shadow-sm h-75">
-                <div className="card-body row">
-                  <div className="d-flex flex-row">
-                    <div className="border-end px-0 bg-light col-4">
-                      <ChannelsPanel />
-                    </div>
-                    <div className="col-8">
-                      <MessagesPanel />
-                    </div>
-                  </div>
-                </div>
+    <div className="container overflow-hidden my-4 p-0 h-100 shadow rounded">
+      <Modal />
+      {
+        !isChatContentLoaded
+          ? (
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">
+                {t('loading')}
+              </span>
+            </Spinner>
+          )
+          : (
+            <div className="row p-0 m-0 h-100">
+              <div className="col-4 col-md-2 p-0 border-end h-100">
+                <ChannelsPanel />
               </div>
-            )
-        }
-      </div>
+              <div className="col-8 col-md-10 p-0 h-100">
+                <MessagesPanel />
+              </div>
+            </div>
+          )
+      }
     </div>
   );
 };

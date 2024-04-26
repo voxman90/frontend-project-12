@@ -24,7 +24,7 @@ const ChannelItem = ({
       <ButtonGroup className="w-100">
         <Button
           variant={(isActive) ? 'secondary' : 'light'}
-          className="rounded-0 text-start"
+          className="rounded-0 text-start text-truncate"
           onClick={(isActive) ? null : onClick}
         >
           {`# ${name}`}
@@ -60,43 +60,47 @@ const ChannelsPanel = () => {
   const activeChannelId = useSelector((state) => state.ui.activeChannelId);
 
   return (
-    <Card className="rounded-0 border-0 h-100">
-      <Card.Header className="rounded-0">
+    <Card className="rounded-0 border-0 h-100 bg-light">
+      <Card.Header className="rounded-0 border-0 bg-light ps-4 py-4 mb-3 flex-shrink-0 overflow-hidden">
         <div className="d-flex justify-content-between align-items-baseline">
-          <b className="text-capitalize">{t('channels.channels')}</b>
+          <b className="text-capitalize">
+            {t('channels.channels')}
+          </b>
           <Button
             variant="light"
-            className="text-primary"
+            className="text-primary p-0 ms-2"
             onClick={() => dispatch(uiActions.openModal({ type: modalType.addChannel }))}
           >
             <PlusSquare width="20" height="20" />
           </Button>
         </div>
       </Card.Header>
-      <ul className="list-unstyled">
-        {
-          channels.map((data) => {
-            const channelId = data.id;
+      <Card.Body className="p-0 overflow-auto">
+        <ul className="list-unstyled">
+          {
+            channels.map((data) => {
+              const channelId = data.id;
 
-            return (
-              <ChannelItem
-                key={channelId}
-                data={data}
-                isActive={channelId === activeChannelId}
-                onClick={() => dispatch(uiActions.setActiveChannel(channelId))}
-                handleRemove={() => dispatch(uiActions.openModal({
-                  channelId,
-                  type: modalType.deleteChannel,
-                }))}
-                handleRename={() => dispatch(uiActions.openModal({
-                  channelId,
-                  type: modalType.renameChannel,
-                }))}
-              />
-            );
-          })
-        }
-      </ul>
+              return (
+                <ChannelItem
+                  key={channelId}
+                  data={data}
+                  isActive={channelId === activeChannelId}
+                  onClick={() => dispatch(uiActions.setActiveChannel(channelId))}
+                  handleRemove={() => dispatch(uiActions.openModal({
+                    channelId,
+                    type: modalType.deleteChannel,
+                  }))}
+                  handleRename={() => dispatch(uiActions.openModal({
+                    channelId,
+                    type: modalType.renameChannel,
+                  }))}
+                />
+              );
+            })
+          }
+        </ul>
+      </Card.Body>
     </Card>
   );
 };
