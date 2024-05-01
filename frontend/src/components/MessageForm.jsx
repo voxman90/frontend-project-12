@@ -73,13 +73,14 @@ const MessageForm = () => {
           id="message"
           name="message"
           value={formik.values.message}
-          placeholder={t('chat.newMessage')}
+          placeholder={t('chat.enterMessage')}
           onChange={formik.handleChange}
           ref={inputRef}
+          aria-label={t('chat.newMessage')}
           required
         />
         <Form.Label htmlFor="message" className="d-none">
-          {t('chat.newMessage')}
+          {t('chat.enterMessage')}
         </Form.Label>
         <Button
           type="submit"

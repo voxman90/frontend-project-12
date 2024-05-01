@@ -42,7 +42,8 @@ const ru = {
       messageCount_one: 'сообщение',
       messageCount_few: 'сообщения',
       messageCount_many: 'сообщений',
-      newMessage: 'Введите сообщение...',
+      enterMessage: 'Введите сообщение...',
+      newMessage: 'Новое сообщение',
     },
     signup: {
       required: 'Обязательное поле',

@@ -24,7 +24,7 @@ const ChannelItem = ({
       <ButtonGroup className="w-100">
         <Button
           variant={(isActive) ? 'secondary' : 'light'}
-          className="rounded-0 text-start text-truncate"
+          className="w-100 rounded-0 text-start text-truncate"
           onClick={(isActive) ? null : onClick}
         >
           {`# ${name}`}
