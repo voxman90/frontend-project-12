@@ -72,7 +72,7 @@ const ChannelsPanel = () => {
             onClick={() => dispatch(uiActions.openModal({ type: modalType.addChannel }))}
           >
             <PlusSquare width="20" height="20" />
-            <div className="d-none">+</div>
+            <div className="visually-hidden">+</div>
           </Button>
         </div>
       </Card.Header>
