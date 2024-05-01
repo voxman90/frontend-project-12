@@ -87,15 +87,18 @@ const AddChannelModal = ({ t, token }) => {
       <Form noValidate onSubmit={formik.handleSubmit}>
         <ModalBootstrap.Body>
           <Form.Group className="mb-3" controlId="channelName">
-            <Form.Label className="d-none">{t('modals.channelName')}</Form.Label>
-            <Form.Control
-              type="text"
-              name="channelName"
-              value={formik.values.channelName}
-              onChange={formik.handleChange}
-              isInvalid={!!formik.errors.channelName}
-              ref={inputRef}
-            />
+            <Form.Floating>
+              <Form.Control
+                type="text"
+                name="channelName"
+                placeholder=""
+                value={formik.values.channelName}
+                onChange={formik.handleChange}
+                isInvalid={!!formik.errors.channelName}
+                ref={inputRef}
+              />
+              <Form.Label>{t('modals.channelName')}</Form.Label>
+            </Form.Floating>
             <Form.Control.Feedback type="invalid">
               {formik.errors.channelName}
             </Form.Control.Feedback>
@@ -243,15 +246,18 @@ const RenameChannelModal = ({ t, token, channelId }) => {
       <Form noValidate onSubmit={formik.handleSubmit}>
         <ModalBootstrap.Body>
           <Form.Group className="mb-3" controlId="newChannelName">
-            <Form.Label className="d-none">{t('modals.editChannelName')}</Form.Label>
-            <Form.Control
-              type="text"
-              name="newChannelName"
-              value={formik.values.newChannelName}
-              onChange={formik.handleChange}
-              isInvalid={!!formik.errors.newChannelName}
-              ref={inputRef}
-            />
+            <Form.Floating>
+              <Form.Control
+                type="text"
+                name="newChannelName"
+                placeholder=""
+                value={formik.values.newChannelName}
+                onChange={formik.handleChange}
+                isInvalid={!!formik.errors.newChannelName}
+                ref={inputRef}
+              />
+              <Form.Label>{t('modals.channelName')}</Form.Label>
+            </Form.Floating>
             <Form.Control.Feedback type="invalid">
               {formik.errors.newChannelName}
             </Form.Control.Feedback>
