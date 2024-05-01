@@ -8,7 +8,6 @@ import {
   Dropdown,
   DropdownButton,
 } from 'react-bootstrap';
-import { PlusSquare } from 'react-bootstrap-icons';
 
 import { modalType, actions as uiActions } from '../slices/ui';
 import { channelsSelectors } from '../slices/channels';
@@ -68,11 +67,15 @@ const ChannelsPanel = () => {
           </b>
           <Button
             variant="light"
-            className="text-primary p-0 ms-2"
+            className="text-primary rounded-1 border border-primary ms-2"
+            style={{
+              width: '20px',
+              lineHeight: '20px',
+              padding: '0px 0px 2px 0px',
+            }}
             onClick={() => dispatch(uiActions.openModal({ type: modalType.addChannel }))}
           >
-            <PlusSquare width="20" height="20" />
-            <div className="visually-hidden">+</div>
+            +
           </Button>
         </div>
       </Card.Header>
