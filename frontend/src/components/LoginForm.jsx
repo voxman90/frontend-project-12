@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { useFormik } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Card, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useFormik } from 'formik';
+import axios from 'axios';
 
 import { actions as authActions } from '../slices/auth.js';
 import routes from '../routes.js';
+import { handleAxiosErrors } from '../utils.js';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -38,20 +38,14 @@ const LoginForm = () => {
           navigate(routes.chatPagePath());
         })
         .catch((reason) => {
-          const status = reason.response?.status;
+          handleAxiosErrors(reason, t, (status) => {
+            if (status === 401) {
+              setAuthFailed(true);
+              inputRef.current.select();
+            }
 
-          if (status === 401) {
-            setAuthFailed(true);
-            inputRef.current.select();
-            return;
-          }
-
-          if (status) {
-            toast.error(t('errors.network'));
-            return;
-          }
-
-          toast.error(t('errors.unknown'));
+            return status === 401;
+          });
         });
     },
   });

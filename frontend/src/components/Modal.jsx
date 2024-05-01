@@ -4,23 +4,24 @@ import React, {
   useState,
   useContext,
 } from 'react';
-import { useFormik } from 'formik';
 import {
   Button,
   Modal as ModalBootstrap,
   Form,
   CloseButton,
 } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import { LeoProfanityContext } from '../context/filter';
 import { actions as uiActions, modalType } from '../slices/ui';
-import { channelsSelectors } from '../slices/channels';
+import { channelsSelectors, actions as channelsActions } from '../slices/channels';
 import routes from '../routes';
+import { handleAxiosErrors } from '../utils';
 
 const AddChannelModal = ({ t, token }) => {
   const dispatch = useDispatch();
@@ -56,17 +57,11 @@ const AddChannelModal = ({ t, token }) => {
         .then((response) => {
           const newChannelId = response.data.id;
           toast.success(t('modals.created'));
-          dispatch(uiActions.setActiveChannel(newChannelId));
+          dispatch(channelsActions.setActiveChannel(newChannelId));
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
-          console.error(reason);
-
-          if (reason.response?.status) {
-            toast.error(t('errors.network'));
-          }
-
-          toast.error(t('errors.unknown'));
+          handleAxiosErrors(reason, t);
         })
         .finally(() => {
           setSubmitting(false);
@@ -141,13 +136,7 @@ const DeleteChannelModal = ({ t, token, channelId }) => {
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
-          console.error(reason);
-
-          if (reason.response?.status) {
-            toast.error(t('errors.network'));
-          }
-
-          toast.error(t('errors.unknown'));
+          handleAxiosErrors(reason, t);
         })
         .finally(() => {
           setSubmitting(false);
@@ -219,13 +208,7 @@ const RenameChannelModal = ({ t, token, channelId }) => {
           dispatch(uiActions.closeModal());
         })
         .catch((reason) => {
-          console.error(reason);
-
-          if (reason.response?.status) {
-            toast.error(t('errors.network'));
-          }
-
-          toast.error(t('errors.unknown'));
+          handleAxiosErrors(reason, t);
         })
         .finally(() => {
           setSubmitting(false);

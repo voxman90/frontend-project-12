@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 import { actions as channelsActions } from '../slices/channels';
 import { actions as messagesActions } from '../slices/messages';
-import { actions as uiActions } from '../slices/ui';
 import routes from '../routes';
+import { handleAxiosErrors } from '../utils';
 import ChannelsPanel from './ChannelsPanel';
 import MessagesPanel from './MessagesPanel';
 import Modal from './Modal';
@@ -21,11 +23,12 @@ const fetchData = async (path, authToken) => axios.get(
 const ChatPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const authToken = useSelector((state) => state.auth.token);
-  const isChatContentLoaded = useSelector((state) => state.ui.isChatContentLoaded);
+  const isChannelsLoaded = useSelector((state) => state.channels.isChannelsLoaded);
 
   useEffect(() => {
-    if (!isChatContentLoaded) {
+    if (!isChannelsLoaded) {
       const fetchChannelsData = () => fetchData(routes.channelsPath(), authToken);
       const fetchMessaagesData = () => fetchData(routes.messagesPath(), authToken);
 
@@ -33,24 +36,27 @@ const ChatPage = () => {
         fetchChannelsData(),
         fetchMessaagesData(),
       ]).then(([channelsData, messagesData]) => {
-        const dispatchData = () => {
-          dispatch(channelsActions.addChannels(channelsData));
-          dispatch(messagesActions.addMessages(messagesData));
-          dispatch(uiActions.setChatContentLoaded());
-        };
-
-        dispatch(dispatchData);
+        dispatch(channelsActions.addChannels(channelsData));
+        dispatch(messagesActions.addMessages(messagesData));
+        dispatch(channelsActions.setChannelsLoaded());
       }).catch((reason) => {
-        console.error(reason);
+        handleAxiosErrors(reason, t, (status) => {
+          if (status === 401) {
+            toast.error(t('errors.unauthorizedEntry'));
+            navigate(routes.chatPagePath());
+          }
+
+          return status === 401;
+        });
       });
     }
-  }, [isChatContentLoaded]);
+  }, [isChannelsLoaded]);
 
   return (
     <div className="container overflow-hidden my-4 p-0 h-100 shadow rounded">
       <Modal />
       {
-        !isChatContentLoaded
+        !isChannelsLoaded
           ? (
             <div className="d-flex justify-content-center h-100">
               <Spinner animation="border" role="status" className="align-self-center">

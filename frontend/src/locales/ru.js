@@ -65,6 +65,7 @@ const ru = {
     errors: {
       network: 'Ошибка соединения',
       unknown: 'Неизвестная ошибка',
+      unauthorizedEntry: 'Неавторизованный доступ',
     },
   },
 };

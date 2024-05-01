@@ -36,6 +36,10 @@ const i18nextConfig = {
 const subscribeToServerEvents = () => {
   const socket = io();
 
+  socket.on('disconnect', () => {
+    setTimeout(() => socket.connect(), 500);
+  });
+
   socket.on('newMessage', (payload) => {
     store.dispatch(messagesActions.addMessage(payload));
   });

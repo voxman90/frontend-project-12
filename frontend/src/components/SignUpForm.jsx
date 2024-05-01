@@ -9,12 +9,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 
 import routes from '../routes';
+import { handleAxiosErrors } from '../utils';
 import { actions as authActions } from '../slices/auth';
 
 const SignUpForm = () => {
@@ -58,19 +58,13 @@ const SignUpForm = () => {
           navigate(routes.chatPagePath());
         })
         .catch((reason) => {
-          const status = reason.response?.status;
+          handleAxiosErrors(reason, t, (status) => {
+            if (status === 409) {
+              setSignUpError(t('signup.alreadyExists'));
+            }
 
-          if (status === 409) {
-            setSignUpError(t('signup.alreadyExists'));
-            return;
-          }
-
-          if (status) {
-            toast.error(t('errors.network'));
-            return;
-          }
-
-          toast.error(t('errors.unknown'));
+            return status === 409;
+          });
         })
         .finally(() => {
           setSubmitting(false);

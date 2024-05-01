@@ -40,7 +40,7 @@ const App = () => {
             <Route path="" element={<ChatPage />} />
           </Route>
         </Routes>
-        <ToastContainer position="bottom-right" />
+        <ToastContainer position="top-right" />
       </div>
     </Router>
   );

@@ -20,7 +20,7 @@ const ChannelHeader = ({ channelName, messageCount, t }) => (
 const MessagesPanel = () => {
   const { t } = useTranslation();
 
-  const activeChannelId = useSelector((state) => state.ui.activeChannelId);
+  const activeChannelId = useSelector((state) => state.channels.activeChannelId);
   const activeChannelName = useSelector((state) => (
     channelsSelectors.selectById(state, activeChannelId)?.name
   ));

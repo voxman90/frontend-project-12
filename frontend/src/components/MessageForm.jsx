@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
 import { LeoProfanityContext } from '../context/filter';
 import routes from '../routes';
+import { handleAxiosErrors } from '../utils';
 
 const MessageForm = () => {
   const { t } = useTranslation();
@@ -21,7 +21,7 @@ const MessageForm = () => {
   const filter = useContext(LeoProfanityContext);
 
   const { username, token } = useSelector((state) => state.auth);
-  const channelId = useSelector((state) => state.ui.activeChannelId);
+  const channelId = useSelector((state) => state.channels.activeChannelId);
 
   const formik = useFormik({
     initialValues: {
@@ -45,13 +45,7 @@ const MessageForm = () => {
           formik.resetForm();
         })
         .catch((reason) => {
-          console.error(reason);
-
-          if (reason.response?.status) {
-            toast.error(t('errors.network'));
-          }
-
-          toast.error(t('errors.unknown'));
+          handleAxiosErrors(reason, t);
         })
         .finally(() => {
           setSubmitting(false);

@@ -1,15 +1,15 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   ButtonGroup,
   Card,
   Dropdown,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { modalType, actions as uiActions } from '../slices/ui';
-import { channelsSelectors } from '../slices/channels';
+import { channelsSelectors, actions as channelsActions } from '../slices/channels';
 
 const ChannelItem = ({
   data, isActive, onClick, handleRemove, handleRename,
@@ -61,7 +61,7 @@ const ChannelsPanel = () => {
   const dispatch = useDispatch();
 
   const channels = useSelector(channelsSelectors.selectAll);
-  const activeChannelId = useSelector((state) => state.ui.activeChannelId);
+  const activeChannelId = useSelector((state) => state.channels.activeChannelId);
 
   return (
     <Card className="rounded-0 border-0 h-100 bg-light">
@@ -90,7 +90,7 @@ const ChannelsPanel = () => {
                   key={channelId}
                   data={data}
                   isActive={channelId === activeChannelId}
-                  onClick={() => dispatch(uiActions.setActiveChannel(channelId))}
+                  onClick={() => dispatch(channelsActions.setActiveChannel(channelId))}
                   handleRemove={() => dispatch(uiActions.openModal({
                     channelId,
                     type: modalType.deleteChannel,
