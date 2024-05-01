@@ -17,3 +17,9 @@ body, html, #root {
 .navbar-brand > a:hover {
   color: inherit;
 }
+
+.add-channel-button {
+  width: 20px;
+  line-height: 20px;
+  padding: 0px 0px 2px 0px;
+}

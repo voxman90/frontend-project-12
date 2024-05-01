@@ -29,13 +29,18 @@ const App = () => {
           <Route path="*" element={<Page404 />} />
           <Route path={routes.loginPagePath()} element={<LoginForm />} />
           <Route path={routes.signupPagePath()} element={<SignUpForm />} />
-          <Route path="/" element={isAuthorisedUser ? <Outlet /> : <Navigate to={routes.loginPagePath()} />}>
+          <Route
+            path={routes.chatPagePath()}
+            element={
+              isAuthorisedUser
+                ? <Outlet />
+                : <Navigate to={routes.loginPagePath()} />
+            }
+          >
             <Route path="" element={<ChatPage />} />
           </Route>
         </Routes>
-        <ToastContainer
-          position="bottom-right"
-        />
+        <ToastContainer position="bottom-right" />
       </div>
     </Router>
   );

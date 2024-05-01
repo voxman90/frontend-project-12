@@ -72,12 +72,7 @@ const ChannelsPanel = () => {
           </b>
           <Button
             variant="light"
-            className="text-primary rounded-1 border border-primary ms-2"
-            style={{
-              width: '20px',
-              lineHeight: '20px',
-              padding: '0px 0px 2px 0px',
-            }}
+            className="text-primary rounded-1 border border-primary ms-2 add-channel-button"
             onClick={() => dispatch(uiActions.openModal({ type: modalType.addChannel }))}
           >
             +
