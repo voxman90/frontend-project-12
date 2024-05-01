@@ -6,7 +6,6 @@ import {
   ButtonGroup,
   Card,
   Dropdown,
-  DropdownButton,
 } from 'react-bootstrap';
 
 import { modalType, actions as uiActions } from '../slices/ui';
@@ -31,19 +30,25 @@ const ChannelItem = ({
         {
           (removable)
             ? (
-              <DropdownButton
-                variant={(isActive) ? 'secondary' : 'light'}
-                as={ButtonGroup}
-                title=""
-                id="bg-nested-dropdown"
-              >
-                <Dropdown.Item onClick={handleRemove}>
-                  {t('channels.remove')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={handleRename}>
-                  {t('channels.rename')}
-                </Dropdown.Item>
-              </DropdownButton>
+              <Dropdown as={ButtonGroup}>
+                <Dropdown.Toggle
+                  variant={(isActive) ? 'secondary' : 'light'}
+                  id="bg-nested-dropdown"
+                >
+                  <span className="visually-hidden">
+                    {t('channels.menu')}
+                  </span>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleRemove}>
+                    {t('channels.remove')}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleRename}>
+                    {t('channels.rename')}
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             ) : null
         }
       </ButtonGroup>
