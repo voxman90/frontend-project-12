@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
+import { actions as authActions } from '../slices/auth';
 import { actions as channelsActions } from '../slices/channels';
 import { actions as messagesActions } from '../slices/messages';
 import routes from '../routes';
@@ -43,6 +44,7 @@ const ChatPage = () => {
         handleAxiosErrors(reason, t, (status) => {
           if (status === 401) {
             toast.error(t('errors.unauthorizedEntry'));
+            dispatch(authActions.logout());
             navigate(routes.chatPagePath());
           }
 
