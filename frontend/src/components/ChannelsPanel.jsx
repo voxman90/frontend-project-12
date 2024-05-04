@@ -1,4 +1,6 @@
-import React from 'react';
+/* eslint prefer-arrow-callback: 0 */
+
+import React, { useEffect, useRef, forwardRef } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -11,15 +13,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { modalType, actions as uiActions } from '../slices/ui';
 import { channelsSelectors, actions as channelsActions } from '../slices/channels';
 
-const ChannelItem = ({
+const ChannelItem = forwardRef(function ChannelItem({
   data, isActive, onClick, handleRemove, handleRename,
-}) => {
+}, activeChannelRef) {
   const { name, removable } = data;
   const { t } = useTranslation();
 
   return (
     <li>
-      <ButtonGroup className="w-100">
+      <ButtonGroup className="w-100" ref={activeChannelRef}>
         <Button
           variant={(isActive) ? 'secondary' : 'light'}
           className="w-100 rounded-0 text-start text-truncate"
@@ -54,14 +56,19 @@ const ChannelItem = ({
       </ButtonGroup>
     </li>
   );
-};
+});
 
 const ChannelsPanel = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const activeChannelItem = useRef(null);
 
   const channels = useSelector(channelsSelectors.selectAll);
   const activeChannelId = useSelector((state) => state.channels.activeChannelId);
+
+  useEffect(() => {
+    activeChannelItem.current?.scrollIntoView();
+  }, [activeChannelId]);
 
   return (
     <Card className="rounded-0 border-0 h-100 bg-light">
@@ -90,6 +97,7 @@ const ChannelsPanel = () => {
                   key={channelId}
                   data={data}
                   isActive={channelId === activeChannelId}
+                  ref={(channelId === activeChannelId) ? activeChannelItem : null}
                   onClick={() => dispatch(channelsActions.setActiveChannel(channelId))}
                   handleRemove={() => dispatch(uiActions.openModal({
                     channelId,
