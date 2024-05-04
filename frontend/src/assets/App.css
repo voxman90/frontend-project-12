@@ -23,3 +23,9 @@ body, html, #root {
   line-height: 20px;
   padding: 0px 0px 2px 0px;
 }
+
+.scroll-bottom-button {
+  top: 18px;
+  right: 5%;
+  padding: 10px 12px;
+}
