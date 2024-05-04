@@ -37,6 +37,7 @@ const ru = {
     hexletChat: 'Hexlet Chat',
     logout: 'Выйти',
     chat: {
+      required: 'Сообщение не должно быть пустым',
       send: 'Отправить',
       messageCount_zero: 'сообщений',
       messageCount_one: 'сообщение',
