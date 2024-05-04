@@ -40,7 +40,6 @@ const AddChannelModal = ({ t, token }) => {
 
   const channels = useSelector(channelsSelectors.selectAll);
   const channelsNames = channels.map(({ name }) => filter.clean(name));
-  console.log(channelsNames);
 
   const formik = useFormik({
     initialValues: {
@@ -73,8 +72,12 @@ const AddChannelModal = ({ t, token }) => {
   });
 
   useEffect(() => {
+    if (formik.errors.channelName) {
+      inputRef.current.select();
+    }
+
     inputRef.current.focus();
-  }, [formik.isSubmitting]);
+  }, [formik.isSubmitting, formik.errors.channelName]);
 
   return (
     <>
@@ -214,8 +217,12 @@ const RenameChannelModal = ({ t, token, channelId }) => {
   });
 
   useEffect(() => {
+    if (formik.errors.newChannelName) {
+      inputRef.current.select();
+    }
+
     inputRef.current.focus();
-  }, [formik.isSubmitting]);
+  }, [formik.isSubmitting, formik.errors.newChannelName]);
 
   return (
     <>
