@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Card } from 'react-bootstrap';
 
-import MessageForm from './MessageForm';
 import { messagesSelectors } from '../slices/messages';
 import { channelsSelectors } from '../slices/channels';
+
+import MessageForm from './MessageForm';
 
 const ChannelHeader = ({ channelName, messageCount, t }) => (
   <Card.Header className="rounded-0 p-3">

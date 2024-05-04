@@ -45,6 +45,8 @@ const SignUpForm = () => {
       passwordConfirmation: '',
     },
     validationSchema: schema,
+    validateOnChange: false,
+    validateOnBlur: true,
     onSubmit: ({ username, password }) => {
       setSubmitting(true);
 
@@ -96,7 +98,8 @@ const SignUpForm = () => {
                     placeholder=""
                     value={formik.values.username}
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.username}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.username && !!(formik.errors.username)}
                     ref={usernameInputRef}
                   />
                   <Form.Control.Feedback type="invalid" tooltip>
@@ -115,7 +118,8 @@ const SignUpForm = () => {
                     value={formik.values.password}
                     placeholder=""
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.password}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.password && !!(formik.errors.password)}
                   />
                   <Form.Control.Feedback type="invalid" tooltip>
                     {formik.errors.password}
@@ -133,7 +137,11 @@ const SignUpForm = () => {
                     value={formik.values.passwordConfirmation}
                     placeholder=""
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.passwordConfirmation}
+                    onBlur={formik.handleBlur}
+                    isInvalid={
+                      formik.touched.passwordConfirmation
+                      && !!(formik.errors.passwordConfirmation)
+                    }
                   />
                   <Form.Control.Feedback type="invalid" tooltip>
                     {formik.errors.passwordConfirmation}

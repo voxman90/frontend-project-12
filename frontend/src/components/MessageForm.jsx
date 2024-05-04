@@ -4,11 +4,11 @@ import React, {
   useState,
   useContext,
 } from 'react';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import axios from 'axios';
-import { Button, Form, InputGroup } from 'react-bootstrap';
 
 import { LeoProfanityContext } from '../context/filter';
 import routes from '../routes';

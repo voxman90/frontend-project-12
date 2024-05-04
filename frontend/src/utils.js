@@ -6,9 +6,7 @@ const handleAxiosErrors = (error, t, handleStatus = () => false) => {
   if (error.response) {
     const { status } = error.response;
 
-    console.error(error.response.data);
-    console.error(error.response.status);
-    console.error(error.response.headers);
+    console.error(error.response);
 
     if (handleStatus(status)) {
       return;

@@ -23,6 +23,15 @@ import { channelsSelectors, actions as channelsActions } from '../slices/channel
 import routes from '../routes';
 import { handleAxiosErrors } from '../utils';
 
+const getValidationScheme = (fieldName, names, t) => yup.object().shape({
+  [fieldName]: yup.string()
+    .required(t('modals.required'))
+    .trim()
+    .notOneOf(names, t('modals.uniq'))
+    .min(3, t('modals.min'))
+    .max(20, t('modals.max')),
+});
+
 const AddChannelModal = ({ t, token }) => {
   const dispatch = useDispatch();
   const [isSubmitting, setSubmitting] = useState(false);
@@ -31,27 +40,21 @@ const AddChannelModal = ({ t, token }) => {
 
   const channels = useSelector(channelsSelectors.selectAll);
   const channelsNames = channels.map(({ name }) => filter.clean(name));
-
-  const schema = yup.object().shape({
-    channelName: yup.string()
-      .required(t('modals.required'))
-      .min(3, t('modals.min'))
-      .max(20, t('modals.max'))
-      .notOneOf(channelsNames, t('modals.uniq')),
-  });
+  console.log(channelsNames);
 
   const formik = useFormik({
     initialValues: {
       channelName: '',
     },
-    validationSchema: schema,
+    validationSchema: getValidationScheme('channelName', channelsNames, t),
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: ({ channelName }) => {
       setSubmitting(true);
+      const trimmedChannelName = channelName.trim();
       axios.post(
         routes.channelsPath(),
-        { name: filter.clean(channelName) },
+        { name: filter.clean(trimmedChannelName) },
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then((response) => {
@@ -89,14 +92,15 @@ const AddChannelModal = ({ t, token }) => {
                 placeholder=""
                 value={formik.values.channelName}
                 onChange={formik.handleChange}
-                isInvalid={!!formik.errors.channelName}
+                onBlur={formik.handleBlur}
+                isInvalid={formik.touched.channelName && !!formik.errors.channelName}
                 ref={inputRef}
               />
               <Form.Label>{t('modals.channelName')}</Form.Label>
+              <Form.Control.Feedback type="invalid" tooltip>
+                {formik.errors.channelName}
+              </Form.Control.Feedback>
             </Form.Floating>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.channelName}
-            </Form.Control.Feedback>
           </Form.Group>
         </ModalBootstrap.Body>
         <ModalBootstrap.Footer>
@@ -181,26 +185,19 @@ const RenameChannelModal = ({ t, token, channelId }) => {
   const channels = useSelector(channelsSelectors.selectAll);
   const channelsNames = channels.map(({ name }) => filter.clean(name));
 
-  const schema = yup.object().shape({
-    newChannelName: yup.string()
-      .required(t('modals.required'))
-      .min(3, t('modals.min'))
-      .max(20, t('modals.max'))
-      .notOneOf(channelsNames, t('modals.uniq')),
-  });
-
   const formik = useFormik({
     initialValues: {
       newChannelName: '',
     },
-    validationSchema: schema,
+    validationSchema: getValidationScheme('newChannelName', channelsNames, t),
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: ({ newChannelName }) => {
       setSubmitting(true);
+      const trimmedChannelName = newChannelName.trim();
       axios.patch(
         routes.channelPath(channelId),
-        { name: filter.clean(newChannelName) },
+        { name: filter.clean(trimmedChannelName) },
         { headers: { Authorization: `Bearer ${token}` } },
       )
         .then(() => {
@@ -236,14 +233,15 @@ const RenameChannelModal = ({ t, token, channelId }) => {
                 placeholder=""
                 value={formik.values.newChannelName}
                 onChange={formik.handleChange}
-                isInvalid={!!formik.errors.newChannelName}
+                onBlur={formik.handleBlur}
+                isInvalid={formik.touched.newChannelName && !!formik.errors.newChannelName}
                 ref={inputRef}
               />
               <Form.Label>{t('modals.channelName')}</Form.Label>
+              <Form.Control.Feedback type="invalid" tooltip>
+                {formik.errors.newChannelName}
+              </Form.Control.Feedback>
             </Form.Floating>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.newChannelName}
-            </Form.Control.Feedback>
           </Form.Group>
         </ModalBootstrap.Body>
         <ModalBootstrap.Footer>

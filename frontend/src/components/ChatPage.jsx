@@ -11,6 +11,7 @@ import { actions as channelsActions } from '../slices/channels';
 import { actions as messagesActions } from '../slices/messages';
 import routes from '../routes';
 import { handleAxiosErrors } from '../utils';
+
 import ChannelsPanel from './ChannelsPanel';
 import MessagesPanel from './MessagesPanel';
 import Modal from './Modal';

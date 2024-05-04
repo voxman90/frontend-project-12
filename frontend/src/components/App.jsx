@@ -11,12 +11,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import '../assets/App.css';
+import routes from '../routes';
+
 import ChatPage from './ChatPage';
 import LoginForm from './LoginForm';
 import Page404 from './Page404';
 import Navbar from './Navbar';
 import SignUpForm from './SignUpForm';
-import routes from '../routes';
 
 const App = () => {
   const isAuthorisedUser = useSelector((state) => state.auth.token);
