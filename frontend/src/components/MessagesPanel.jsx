@@ -50,7 +50,7 @@ const MessagesPanel = () => {
   }, []);
 
   useEffect(() => {
-    const lastMessageUsername = messages.at(-1).username;
+    const lastMessageUsername = messages.at(-1)?.username;
 
     if (
       !isUserScrolled
