@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import routes from '../routes';
+
 const Page404 = () => {
   const { t } = useTranslation();
 
@@ -11,7 +13,7 @@ const Page404 = () => {
       </h1>
       <p className="text-muted">
         {t('page404.message')}
-        <a href="/">{t('page404.linkText')}</a>
+        <a href={routes.chatPagePath()}>{t('page404.linkText')}</a>
       </p>
     </div>
   );
